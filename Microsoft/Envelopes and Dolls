@@ -1,0 +1,35 @@
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    int maxEnvelopes(vector<vector<int>>& envelopes) {
+        if (envelopes.empty()) return 0;
+
+        // Step 1: Sort envelopes by width, and by height in descending order if widths are the same
+        sort(envelopes.begin(), envelopes.end(), [](const vector<int>& a, const vector<int>& b) {
+            return a[0] == b[0] ? a[1] > b[1] : a[0] < b[0];
+        });
+
+        // Step 2: Extract heights
+        vector<int> heights;
+        for (const auto& env : envelopes) {
+            heights.push_back(env[1]);
+        }
+
+        // Step 3: Find LIS on heights using binary search
+        vector<int> lis;
+        for (int h : heights) {
+            auto it = lower_bound(lis.begin(), lis.end(), h);
+            if (it == lis.end()) {
+                lis.push_back(h);
+            } else {
+                *it = h;
+            }
+        }
+
+        return lis.size();
+    }
+};
