@@ -1,0 +1,41 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <string>
+
+using namespace std;
+
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+        int bulls = 0;
+        int cows = 0;
+        
+        unordered_map<char, int> secretCount; // To count occurrences of digits in secret
+        unordered_map<char, int> guessCount;  // To count occurrences of digits in guess
+        
+        // First pass: Find all bulls
+        for (int i = 0; i < secret.size(); ++i) {
+            if (secret[i] == guess[i]) {
+                bulls++;  // Same digit at the same position
+            } else {
+                // Count non-bull characters for cows calculation
+                secretCount[secret[i]]++;
+                guessCount[guess[i]]++;
+            }
+        }
+        
+        // Second pass: Calculate cows
+        for (auto& entry : guessCount) {
+            char digit = entry.first;
+            // The number of cows for this digit is the minimum of the counts of
+            // the digit in secret and guess (not already counted as bulls)
+            if (secretCount.find(digit) != secretCount.end()) {
+                cows += min(secretCount[digit], guessCount[digit]);
+            }
+        }
+        
+        // Return the result in "xAyB" format
+        return to_string(bulls) + "A" + to_string(cows) + "B";
+    }
+};
