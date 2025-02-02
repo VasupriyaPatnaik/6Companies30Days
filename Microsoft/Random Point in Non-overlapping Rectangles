@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+#include <random>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    Solution(vector<vector<int>>& rects) {
+        this->rects = rects;
+        int totalPoints = 0;
+        
+        // Calculate the number of points in each rectangle and store prefix sum
+        for (const auto& rect : rects) {
+            int a = rect[0], b = rect[1], x = rect[2], y = rect[3];
+            int numPoints = (x - a + 1) * (y - b + 1);
+            totalPoints += numPoints;
+            prefixSum.push_back(totalPoints);
+        }
+        
+        this->totalPoints = totalPoints;
+    }
+    
+    vector<int> pick() {
+        // Generate a random number between 1 and totalPoints (inclusive)
+        int target = rand() % totalPoints + 1;
+        
+        // Binary search to find which rectangle contains the target point
+        int low = 0, high = prefixSum.size() - 1;
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+            if (prefixSum[mid] < target) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        
+        // Get the selected rectangle index
+        int rectIndex = low;
+        int a = rects[rectIndex][0], b = rects[rectIndex][1], x = rects[rectIndex][2], y = rects[rectIndex][3];
+        
+        // Calculate the offset within the selected rectangle
+        int prevPrefixSum = (rectIndex > 0) ? prefixSum[rectIndex - 1] : 0;
+        int offset = target - prevPrefixSum - 1;
+        
+        // Determine the row and column in the selected rectangle
+        int rows = y - b + 1;
+        int cols = x - a + 1;
+        int row = offset / cols;
+        int col = offset % cols;
+        
+        // Return the random point within the selected rectangle
+        return {a + col, b + row};
+    }
+
+private:
+    vector<vector<int>> rects;
+    vector<int> prefixSum;
+    int totalPoints;
+};
