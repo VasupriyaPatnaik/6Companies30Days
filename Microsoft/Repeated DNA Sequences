@@ -1,0 +1,22 @@
+class Solution {
+public:
+    vector<string> findRepeatedDnaSequences(string s) {
+        unordered_set<string> seen, repeated;
+        vector<string> result;
+        
+        // Edge case: If s has fewer than 10 characters, no sequences can repeat
+        if (s.length() < 10) return result;
+        
+        for (int i = 0; i <= s.length() - 10; i++) {
+            string seq = s.substr(i, 10);  // Extract a 10-character substring
+            
+            if (seen.count(seq)) {
+                repeated.insert(seq); // Add to repeated set if seen before
+            }
+            seen.insert(seq); // Mark this sequence as seen
+        }
+        
+        result.assign(repeated.begin(), repeated.end()); // Convert set to vector
+        return result;
+    }
+};
