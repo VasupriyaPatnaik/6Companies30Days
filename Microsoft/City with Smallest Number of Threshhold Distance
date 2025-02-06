@@ -1,0 +1,39 @@
+#include <vector>
+#include <limits.h>
+
+using namespace std;
+
+class Solution {
+public:
+    int findTheCity(int n, vector<vector<int>>& edges, int distanceThreshold) {
+        const int INF = 1e9;
+        vector<vector<int>> dist(n, vector<int>(n, INF));
+
+        // Initialize distance matrix with given edges
+        for (auto& edge : edges) {
+            int u = edge[0], v = edge[1], w = edge[2];
+            dist[u][v] = w;
+            dist[v][u] = w;  // Bidirectional graph
+        }
+
+        // Set diagonal elements to zero
+        for (int i = 0; i < n; i++) {
+            dist[i][i] = 0;
+        }
+
+        // Floyd-Warshall Algorithm: Finding shortest paths between all pairs
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (dist[i][k] != INF && dist[k][j] != INF) {
+                        dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+                    }
+                }
+            }
+        }
+
+        // Find the city with the smallest number of reachable cities within threshold
+        int minReachable = INT_MAX;
+        int bestCity = -1;
+
+        for
