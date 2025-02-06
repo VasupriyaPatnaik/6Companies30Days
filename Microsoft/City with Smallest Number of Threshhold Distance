@@ -6,34 +6,47 @@ using namespace std;
 class Solution {
 public:
     int findTheCity(int n, vector<vector<int>>& edges, int distanceThreshold) {
-        const int INF = 1e9;
-        vector<vector<int>> dist(n, vector<int>(n, INF));
+        vector<vector<int>> dist(n, vector<int>(n, INT_MAX));
 
-        // Initialize distance matrix with given edges
+        // Step 1: Initialize distances
+        for (int i = 0; i < n; i++) dist[i][i] = 0;
+
         for (auto& edge : edges) {
-            int u = edge[0], v = edge[1], w = edge[2];
-            dist[u][v] = w;
-            dist[v][u] = w;  // Bidirectional graph
+            int u = edge[0], v = edge[1], weight = edge[2];
+            dist[u][v] = weight;
+            dist[v][u] = weight;
         }
 
-        // Set diagonal elements to zero
-        for (int i = 0; i < n; i++) {
-            dist[i][i] = 0;
-        }
-
-        // Floyd-Warshall Algorithm: Finding shortest paths between all pairs
+        // Step 2: Apply Floyd-Warshall Algorithm
         for (int k = 0; k < n; k++) {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    if (dist[i][k] != INF && dist[k][j] != INF) {
+                    if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX) {
                         dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
                     }
                 }
             }
         }
 
-        // Find the city with the smallest number of reachable cities within threshold
-        int minReachable = INT_MAX;
-        int bestCity = -1;
+        // Step 3: Count reachable cities for each city
+        int minReachable = INT_MAX, bestCity = -1;
 
-        for
+        for (int i = 0; i < n; i++) {
+            int count = 0;
+            for (int j = 0; j < n; j++) {
+                if (i != j && dist[i][j] <= distanceThreshold) {
+                    count++;
+                }
+            }
+
+            // Step 4: Find the city with the minimum reachable cities
+            // If there are multiple, choose the one with the greatest index
+            if (count <= minReachable) {
+                minReachable = count;
+                bestCity = i;
+            }
+        }
+
+        return bestCity;
+    }
+};
