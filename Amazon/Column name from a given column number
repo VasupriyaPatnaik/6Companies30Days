@@ -1,0 +1,17 @@
+#include <string>
+
+class Solution {
+public:
+    std::string convertToTitle(int columnNumber) {
+        std::string result = "";
+        
+        while (columnNumber > 0) {
+            columnNumber--; // Adjust to 0-based index
+            char letter = 'A' + (columnNumber % 26); // Get the last letter
+            result = letter + result; // Prepend to result
+            columnNumber /= 26; // Move to the next place
+        }
+        
+        return result;
+    }
+};
