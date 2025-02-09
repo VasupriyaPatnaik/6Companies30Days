@@ -1,0 +1,41 @@
+#include <vector>
+#include <unordered_set>
+
+using namespace std;
+
+class Solution {
+public:
+    long long maximumSubarraySum(vector<int>& nums, int k) {
+        unordered_set<int> window;
+        long long maxSum = 0, currentSum = 0;
+        int left = 0;
+
+        for (int right = 0; right < nums.size(); right++) {
+            // Expand the window
+            while (window.count(nums[right])) {
+                // Remove the leftmost element to maintain uniqueness
+                window.erase(nums[left]);
+                currentSum -= nums[left];
+                left++;
+            }
+
+            // Add the new element
+            window.insert(nums[right]);
+            currentSum += nums[right];
+
+            // If window size exceeds `k`, shrink from the left
+            if (right - left + 1 > k) {
+                window.erase(nums[left]);
+                currentSum -= nums[left];
+                left++;
+            }
+
+            // When window size is exactly `k`, update maxSum
+            if (right - left + 1 == k) {
+                maxSum = max(maxSum, currentSum);
+            }
+        }
+        
+        return maxSum;
+    }
+};
