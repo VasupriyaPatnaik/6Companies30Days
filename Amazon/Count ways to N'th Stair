@@ -1,3 +1,4 @@
+#python3
 class Solution:
     def waysToReachStair(self, k: int, ans = 0) -> int:
 
