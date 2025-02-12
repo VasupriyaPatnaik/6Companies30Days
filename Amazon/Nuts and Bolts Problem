@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+  public:
+    // Function to partition the array using a pivot
+    int partition(char arr[], int low, int high, char pivot) {
+        int i = low;
+        for (int j = low; j < high; j++) {
+            if (arr[j] < pivot) {
+                swap(arr[i], arr[j]);
+                i++;
+            } else if (arr[j] == pivot) {
+                swap(arr[j], arr[high]); // Move pivot to the end
+                j--;  // Recheck the new element at arr[j]
+            }
+        }
+        swap(arr[i], arr[high]); // Move pivot to correct position
+        return i;
+    }
+
+    // QuickSort function for nuts and bolts
+    void quickSort(char nuts[], char bolts[], int low, int high) {
+        if (low < high) {
+            // Choose the last bolt as pivot and partition the nuts
+            int pivotIndex = partition(nuts, low, high, bolts[high]);
+
+            // Use the corresponding nut as pivot and partition the bolts
+            partition(bolts, low, high, nuts[pivotIndex]);
+
+            // Recursively sort the partitions
+            quickSort(nuts, bolts, low, pivotIndex - 1);
+            quickSort(nuts, bolts, pivotIndex + 1, high);
+        }
+    }
+
+    void matchPairs(int n, char nuts[], char bolts[]) {
+        quickSort(nuts, bolts, 0, n - 1);
+    }
+};
