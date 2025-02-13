@@ -1,0 +1,40 @@
+class Solution:
+    def matrixChainOrder(self, arr):
+        n = len(arr) - 1  # Number of matrices (A, B, C, ... up to Z)
+        
+        # dp[i][j] will store the minimum multiplication cost
+        dp = [[0] * n for _ in range(n)]
+        
+        # bracket[i][j] stores the index where we split the matrices
+        bracket = [[-1] * n for _ in range(n)]
+        
+        # Filling the DP table
+        for length in range(2, n + 1):  # Length of matrix chain
+            for i in range(n - length + 1):
+                j = i + length - 1
+                dp[i][j] = float('inf')  # Initialize with a large value
+                
+                for k in range(i, j):  # Try all partitions
+                    cost = dp[i][k] + dp[k+1][j] + arr[i] * arr[k+1] * arr[j+1]
+                    if cost < dp[i][j]:
+                        dp[i][j] = cost
+                        bracket[i][j] = k  # Store the optimal split index
+
+        # Function to construct the optimal order using bracket[][]
+        def construct_order(i, j, name):
+            if i == j:
+                return name[i]  # Return matrix name (A, B, ...)
+            k = bracket[i][j]
+            left_part = construct_order(i, k, name)
+            right_part = construct_order(k + 1, j, name)
+            return f"({left_part}{right_part})"
+
+        # Generate matrix names (A, B, C, ..., Z)
+        matrix_names = [chr(65 + i) for i in range(n)]  # A, B, C, ..., Z
+
+        return construct_order(0, n - 1, matrix_names)
+
+# Example usage:
+sol = Solution()
+arr = [40, 20, 30, 10, 30]
+print(sol.matrixChainOrder(arr))  # Expected output: ((A(BC))D)
