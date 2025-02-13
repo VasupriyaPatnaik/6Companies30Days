@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+  public:
+    vector<int> maxOfSubarrays(vector<int>& arr, int k) {
+        vector<int> result;
+        deque<int> dq; // Stores indices of useful elements
+
+        for (int i = 0; i < arr.size(); i++) {
+            // Remove elements out of the current window
+            while (!dq.empty() && dq.front() <= i - k) {
+                dq.pop_front();
+            }
+
+            // Remove elements smaller than current element from the back
+            while (!dq.empty() && arr[dq.back()] <= arr[i]) {
+                dq.pop_back();
+            }
+
+            // Add the current element at the back of deque
+            dq.push_back(i);
+
+            // The maximum element for this window is at the front
+            if (i >= k - 1) {
+                result.push_back(arr[dq.front()]);
+            }
+        }
+        
+        return result;
+    }
+};
+
+// Driver code for testing
+int main() {
+    Solution sol;
+    vector<int> arr = {8, 5, 10, 7, 9, 4, 15, 12, 90, 13};
+    int k = 4;
+    vector<int> ans = sol.maxOfSubarrays(arr, k);
+    
+    for (int num : ans) {
+        cout << num << " ";
+    }
+    return 0;
+}
