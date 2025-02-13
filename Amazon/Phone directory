@@ -1,0 +1,40 @@
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.words = set()  # Store unique words with this prefix
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+            node.words.add(word)  # Store words at each node
+    
+    def search(self, prefix):
+        node = self.root
+        for char in prefix:
+            if char not in node.children:
+                return ["0"]  # No matches
+            node = node.children[char]
+        return sorted(node.words)  # Sort lexicographically
+
+class Solution:
+    def displayContacts(self, n, contact, s):
+        contact = sorted(set(contact))  # Ensure unique and sorted contacts
+        trie = Trie()
+        
+        # Insert all contacts into the Trie
+        for name in contact:
+            trie.insert(name)
+        
+        result = []
+        for i in range(1, len(s) + 1):
+            prefix = s[:i]
+            result.append(trie.search(prefix))  # Search for contacts with this prefix
+        
+        return result
