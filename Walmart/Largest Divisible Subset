@@ -1,0 +1,53 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0) return {};
+
+        sort(nums.begin(), nums.end()); // Step 1: Sort the array
+
+        vector<int> dp(n, 1);   // Stores the length of the largest subset ending at index i
+        vector<int> prev(n, -1); // Stores the previous index for backtracking
+        int maxSize = 1, lastIndex = 0;
+
+        // Step 2: Compute the longest divisible subset
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[i] % nums[j] == 0 && dp[i] < dp[j] + 1) {
+                    dp[i] = dp[j] + 1;
+                    prev[i] = j;
+                }
+            }
+            // Step 3: Track the max subset size and last index
+            if (dp[i] > maxSize) {
+                maxSize = dp[i];
+                lastIndex = i;
+            }
+        }
+
+        // Step 4: Reconstruct the subset
+        vector<int> result;
+        while (lastIndex != -1) {
+            result.push_back(nums[lastIndex]);
+            lastIndex = prev[lastIndex];
+        }
+
+        reverse(result.begin(), result.end()); // Ensure correct order
+        return result;
+    }
+};
+
+// Driver code for testing
+int main() {
+    Solution sol;
+    vector<int> nums = {1, 2, 4, 8};
+    vector<int> result = sol.largestDivisibleSubset(nums);
+
+    for (int num : result) {
+        cout << num << " ";
+    }
+    return 0;
+}
