@@ -1,0 +1,39 @@
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    vector<int> maxSubsequence(vector<int>& nums, int k) {
+        // Min-heap to store top k elements along with their indices
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> minHeap;
+        
+        // Store the largest k elements with their indices
+        for (int i = 0; i < nums.size(); i++) {
+            minHeap.push({nums[i], i});
+            if (minHeap.size() > k) {
+                minHeap.pop();  // Remove the smallest element if heap size exceeds k
+            }
+        }
+        
+        // Extract the elements and sort by index to maintain original order
+        vector<pair<int, int>> topKElements;
+        while (!minHeap.empty()) {
+            topKElements.push_back(minHeap.top());
+            minHeap.pop();
+        }
+        sort(topKElements.begin(), topKElements.end(), [](pair<int, int>& a, pair<int, int>& b) {
+            return a.second < b.second;  // Sort by original index
+        });
+
+        // Extract the values from sorted pairs
+        vector<int> result;
+        for (auto& p : topKElements) {
+            result.push_back(p.first);
+        }
+        
+        return result;
+    }
+};
