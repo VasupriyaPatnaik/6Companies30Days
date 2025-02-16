@@ -1,0 +1,36 @@
+class Solution {
+public:
+    int numFriendRequests(vector<int>& ages) {
+        // Frequency array to count the number of people with each age
+        vector<int> ageCount(121, 0);
+        for (int age : ages) {
+            ageCount[age]++;
+        }
+        
+        int totalRequests = 0;
+        
+        // Iterate over all possible age pairs
+        for (int ageX = 1; ageX <= 120; ageX++) {
+            if (ageCount[ageX] == 0) continue; // Skip if no one has this age
+            
+            for (int ageY = 1; ageY <= 120; ageY++) {
+                if (ageCount[ageY] == 0) continue; // Skip if no one has this age
+                
+                // Check if ageX can send a request to ageY
+                if (ageY <= (0.5 * ageX + 7) || ageY > ageX) {
+                    continue; // Not satisfying the conditions
+                }
+                
+                // Valid pair: Count the requests
+                if (ageX == ageY) {
+                    // If ages are the same, each person can send requests to others
+                    totalRequests += ageCount[ageX] * (ageCount[ageX] - 1);
+                } else {
+                    totalRequests += ageCount[ageX] * ageCount[ageY];
+                }
+            }
+        }
+        
+        return totalRequests;
+    }
+};
