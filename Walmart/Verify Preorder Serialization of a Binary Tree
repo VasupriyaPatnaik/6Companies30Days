@@ -1,0 +1,25 @@
+class Solution {
+public:
+    bool isValidSerialization(string preorder) {
+        vector<string> nodes;
+        stringstream ss(preorder);
+        string token;
+        
+        // Split string by comma
+        while (getline(ss, token, ',')) {
+            nodes.push_back(token);
+        }
+        
+        int slots = 1; // Root requires 1 slot
+
+        for (const string& node : nodes) {
+            slots--; // A node occupies one slot
+            
+            if (slots < 0) return false; // If slots are negative, invalid serialization
+            
+            if (node != "#") slots += 2; // Non-null nodes create 2 new slots
+        }
+        
+        return slots == 0; // Must be exactly 0 at the end
+    }
+};
