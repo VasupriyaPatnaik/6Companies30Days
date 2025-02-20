@@ -1,0 +1,59 @@
+#include <iostream>
+#include <unordered_map>
+#include <vector>
+#include <algorithm>
+#include <unordered_set>
+#include <queue>
+using namespace std;
+
+class Solution {
+public:
+    string frequencySort(string s) {
+        unordered_map<char, int> freq;
+        
+        // Count frequency of each character
+        for (char c : s) {
+            freq[c]++;
+        }
+        
+        // Create a vector of pairs (character, frequency)
+        vector<pair<char, int>> freqVec(freq.begin(), freq.end());
+        
+        // Sort the vector by frequency in decreasing order
+        sort(freqVec.begin(), freqVec.end(), [](const auto &a, const auto &b) {
+            return a.second > b.second; // Sort by frequency (higher first)
+        });
+        
+        // Build the resulting string
+        string result;
+        for (const auto &p : freqVec) {
+            result.append(p.second, p.first);
+        }
+        
+        return result;
+    }
+    
+    bool wordBreak(string s, vector<string>& wordDict) {
+        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());
+        queue<int> q;
+        vector<bool> visited(s.length(), false);
+        q.push(0);
+        
+        while (!q.empty()) {
+            int start = q.front();
+            q.pop();
+            
+            if (visited[start]) continue;
+            visited[start] = true;
+            
+            for (int end = start + 1; end <= s.length(); ++end) {
+                if (wordSet.find(s.substr(start, end - start)) != wordSet.end()) {
+                    if (end == s.length()) return true;
+                    q.push(end);
+                }
+            }
+        }
+        
+        return false;
+    }
+};
