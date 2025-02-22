@@ -1,0 +1,15 @@
+class Solution {
+public:
+    bool asteroidsDestroyed(int mass, vector<int>& asteroids) {
+        sort(asteroids.begin(), asteroids.end()); // Step 1: Sort the asteroids
+        
+        long long planetMass = mass; // Use long long to prevent overflow
+        
+        for (int asteroid : asteroids) {
+            if (planetMass < asteroid) return false; // Step 2: Check if planet can absorb asteroid
+            planetMass += asteroid; // Step 3: Absorb the asteroid
+        }
+        
+        return true; // All asteroids destroyed
+    }
+};
