@@ -1,0 +1,52 @@
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Solution {
+public:
+    vector<string> ones = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"};
+    vector<string> teens = {"Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", 
+                            "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+    vector<string> tens = {"", "", "Twenty", "Thirty", "Forty", "Fifty", 
+                           "Sixty", "Seventy", "Eighty", "Ninety"};
+    vector<string> thousands = {"", "Thousand", "Million", "Billion"};
+
+    string numberToWords(int num) {
+        if (num == 0) return "Zero";
+
+        string result = "";
+        int i = 0;
+
+        while (num > 0) {
+            int chunk = num % 1000;
+            if (chunk != 0) {
+                result = helper(chunk) + (thousands[i] != "" ? " " + thousands[i] : "") + 
+                         (result.empty() ? "" : " " + result);
+            }
+            num /= 1000;
+            i++;
+        }
+        
+        return result;
+    }
+
+private:
+    string helper(int num) {
+        string part = "";
+        if (num >= 100) {
+            part += ones[num / 100] + " Hundred";
+            num %= 100;
+            if (num > 0) part += " ";
+        }
+        if (num >= 10 && num < 20) {
+            part += teens[num - 10];
+        } else if (num >= 20) {
+            part += tens[num / 10];
+            if (num % 10 > 0) part += " " + ones[num % 10];
+        } else if (num > 0) {
+            part += ones[num];
+        }
+        return part;
+    }
+};
