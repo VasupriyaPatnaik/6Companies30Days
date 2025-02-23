@@ -1,0 +1,39 @@
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    int stoneGameVI(vector<int>& aliceValues, vector<int>& bobValues) {
+        int n = aliceValues.size();
+        vector<pair<int, int>> stones;
+
+        // Store (total_value, index) for sorting
+        for (int i = 0; i < n; i++) {
+            stones.push_back({aliceValues[i] + bobValues[i], i});
+        }
+
+        // Sort stones in descending order based on total impact
+        sort(stones.rbegin(), stones.rend());
+
+        int aliceScore = 0, bobScore = 0;
+        
+        // Players pick stones alternatively
+        for (int i = 0; i < n; i++) {
+            int idx = stones[i].second;
+            if (i % 2 == 0) {
+                // Alice's turn
+                aliceScore += aliceValues[idx];
+            } else {
+                // Bob's turn
+                bobScore += bobValues[idx];
+            }
+        }
+
+        // Compare final scores
+        if (aliceScore > bobScore) return 1;
+        if (aliceScore < bobScore) return -1;
+        return 0;
+    }
+};
