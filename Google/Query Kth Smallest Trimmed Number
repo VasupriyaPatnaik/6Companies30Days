@@ -1,0 +1,33 @@
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    vector<int> smallestTrimmedNumbers(vector<string>& nums, vector<vector<int>>& queries) {
+        vector<int> result;
+        
+        for (auto& query : queries) {
+            int k = query[0];  // k-th smallest number
+            int trim = query[1];  // Trim length
+            
+            vector<pair<string, int>> trimmed_nums;
+            
+            // Step 1: Trim each number and store along with its original index
+            for (int i = 0; i < nums.size(); i++) {
+                string trimmed = nums[i].substr(nums[i].size() - trim);
+                trimmed_nums.push_back({trimmed, i});
+            }
+            
+            // Step 2: Sort based on numerical value (lexicographically for strings)
+            sort(trimmed_nums.begin(), trimmed_nums.end());
+            
+            // Step 3: Retrieve the index of the k-th smallest number
+            result.push_back(trimmed_nums[k - 1].second);
+        }
+        
+        return result;
+    }
+};
