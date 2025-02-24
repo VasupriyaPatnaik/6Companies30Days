@@ -1,0 +1,27 @@
+#include <queue>
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int maximumProduct(std::vector<int>& nums, int k) {
+        const int MOD = 1e9 + 7;
+        priority_queue<int, vector<int>, greater<int>> minHeap(nums.begin(), nums.end());
+
+        // Perform k increments on the smallest elements
+        while (k--) {
+            int smallest = minHeap.top();
+            minHeap.pop();
+            minHeap.push(smallest + 1);
+        }
+
+        // Compute the final product
+        long long product = 1;
+        while (!minHeap.empty()) {
+            product = (product * minHeap.top()) % MOD;
+            minHeap.pop();
+        }
+
+        return product;
+    }
+};
