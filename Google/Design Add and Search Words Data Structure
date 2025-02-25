@@ -1,0 +1,52 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class WordDictionary {
+private:
+    struct TrieNode {
+        TrieNode* children[26] = {nullptr}; // Array of pointers to child nodes
+        bool isEnd = false; // Marks end of a word
+    };
+    
+    TrieNode* root; // Root of the Trie
+    
+public:
+    WordDictionary() {
+        root = new TrieNode();
+    }
+    
+    void addWord(string word) {
+        TrieNode* node = root;
+        for (char ch : word) {
+            int index = ch - 'a';
+            if (!node->children[index]) {
+                node->children[index] = new TrieNode();
+            }
+            node = node->children[index];
+        }
+        node->isEnd = true; // Mark end of word
+    }
+    
+    bool searchHelper(string& word, int index, TrieNode* node) {
+        if (!node) return false;
+        if (index == word.size()) return node->isEnd;
+        
+        char ch = word[index];
+        if (ch == '.') {
+            for (int i = 0; i < 26; i++) {
+                if (searchHelper(word, index + 1, node->children[i])) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            int i = ch - 'a';
+            return searchHelper(word, index + 1, node->children[i]);
+        }
+    }
+
+    bool search(string word) {
+        return searchHelper(word, 0, root);
+    }
+};
