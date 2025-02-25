@@ -1,0 +1,83 @@
+class Solution {
+public:
+    vector<int> countSubgraphsForEachDiameter(int n, vector<vector<int>>& edges) {
+        // Build the tree as an adjacency list.
+        vector<vector<int>> adj(n + 1);
+        for (const auto& edge : edges) {
+            int u = edge[0], v = edge[1];
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        
+        // Result vector for diameters 1 to n-1.
+        vector<int> res(n - 1, 0);
+        
+        // Iterate over all subsets represented by bitmask (1-indexed nodes).
+        // We start from mask=1, so that at least one node is included.
+        // We'll skip subsets of size 1 since they don't have an edge.
+        int totalMasks = 1 << n;
+        for (int mask = 1; mask < totalMasks; mask++) {
+            // Count number of nodes in this subset.
+            if (__builtin_popcount(mask) < 2)
+                continue;
+            
+            // Gather nodes in this subset.
+            vector<int> nodes;
+            for (int i = 0; i < n; i++) {
+                if (mask & (1 << i))
+                    nodes.push_back(i + 1);
+            }
+            
+            // Check connectivity using BFS. We use the first node in the subset.
+            int start = nodes[0];
+            queue<int> q;
+            q.push(start);
+            int visitedMask = 0;
+            visitedMask |= (1 << (start - 1));
+            while (!q.empty()) {
+                int cur = q.front();
+                q.pop();
+                for (int nb : adj[cur]) {
+                    if ((mask & (1 << (nb - 1))) && !(visitedMask & (1 << (nb - 1)))) {
+                        visitedMask |= (1 << (nb - 1));
+                        q.push(nb);
+                    }
+                }
+            }
+            // If the visited nodes do not cover the subset, it's not a valid subtree.
+            if (visitedMask != mask)
+                continue;
+            
+            // Lambda to perform BFS restricted to nodes in the subset.
+            auto bfs = [&](int s) -> pair<int,int> {
+                queue<int> q;
+                vector<int> dist(n + 1, -1);
+                dist[s] = 0;
+                q.push(s);
+                int farthest = s;
+                while (!q.empty()) {
+                    int cur = q.front();
+                    q.pop();
+                    for (int nb : adj[cur]) {
+                        if ((mask & (1 << (nb - 1))) && dist[nb] == -1) {
+                            dist[nb] = dist[cur] + 1;
+                            q.push(nb);
+                            if (dist[nb] > dist[farthest])
+                                farthest = nb;
+                        }
+                    }
+                }
+                return make_pair(farthest, dist[farthest]);
+            };
+            
+            // Use two BFS traversals to get the diameter.
+            auto [nodeA, _] = bfs(start);
+            auto [nodeB, diameter] = bfs(nodeA);
+            
+            // Update the answer if diameter is at least 1.
+            if (diameter > 0)
+                res[diameter - 1]++;
+        }
+        return res;
+    }
+};
