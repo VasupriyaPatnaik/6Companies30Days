@@ -1,0 +1,73 @@
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int m, n;
+    vector<vector<int>> directions = {{0,1}, {1,0}, {0,-1}, {-1,0}};
+
+    // Function to count the number of islands using DFS
+    void dfs(int i, int j, vector<vector<int>>& grid, vector<vector<bool>>& visited) {
+        if (i < 0 || j < 0 || i >= m || j >= n || grid[i][j] == 0 || visited[i][j]) 
+            return;
+        visited[i][j] = true;
+        for (auto& dir : directions) 
+            dfs(i + dir[0], j + dir[1], grid, visited);
+    }
+
+    int countIslands(vector<vector<int>>& grid) {
+        vector<vector<bool>> visited(m, vector<bool>(n, false));
+        int islands = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1 && !visited[i][j]) {
+                    islands++;
+                    dfs(i, j, grid, visited);
+                }
+            }
+        }
+        return islands;
+    }
+
+    // Function to check if removing (x,y) disconnects the grid
+    bool isArticulationPoint(vector<vector<int>>& grid, int x, int y) {
+        grid[x][y] = 0; // Temporarily remove land
+        int islands = countIslands(grid);
+        grid[x][y] = 1; // Restore the land
+        return islands > 1 || islands == 0; // If islands increase or grid is empty, it's an articulation point
+    }
+
+    int minDays(vector<vector<int>>& grid) {
+        m = grid.size();
+        n = grid[0].size();
+        int totalLand = 0;
+
+        // Step 1: Check initial number of islands
+        int initialIslands = countIslands(grid);
+        if (initialIslands != 1) 
+            return 0;
+
+        // Step 2: Count total land cells
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) 
+                    totalLand++;
+            }
+        }
+
+        // If there's only one land cell, removing it disconnects the grid
+        if (totalLand == 1) 
+            return 1;
+
+        // Step 3: Check if there's a critical land cell
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1 && isArticulationPoint(grid, i, j))
+                    return 1;
+            }
+        }
+
+        // Step 4: Otherwise, return 2 (worst case)
+        return 2;
+    }
+};
