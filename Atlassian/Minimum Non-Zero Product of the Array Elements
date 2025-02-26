@@ -10,9 +10,9 @@ public:
         long long result = 1;
         while (exp > 0) {
             if (exp % 2 == 1) {
-                result = (result * base) % mod;
+                result = (result * base) % mod;  // Apply modulo at every step
             }
-            base = (base * base) % mod;
+            base = (base * base) % mod;  // Ensure base remains within limits
             exp /= 2;
         }
         return result;
@@ -24,10 +24,10 @@ public:
         long long max_num = (1LL << p) - 1;  // 2^p - 1
         long long pairs = (max_num - 1) / 2; // (2^p - 2) / 2
         
-        // Compute (max_num - 1)^pairs % MOD
-        long long part1 = modPow(max_num - 1, pairs, MOD);
+        // Compute (max_num - 1)^pairs % MOD safely
+        long long part1 = modPow((max_num - 1) % MOD, pairs, MOD);
         
-        // Compute final result: (part1 * max_num) % MOD
+        // Compute final result: (part1 * (max_num % MOD)) % MOD
         return (part1 * (max_num % MOD)) % MOD;
     }
 };
