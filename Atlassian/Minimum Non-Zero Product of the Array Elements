@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    const long long MOD = 1e9 + 7;
+
+    // Fast modular exponentiation: (base^exp) % mod
+    long long modPow(long long base, long long exp, long long mod) {
+        long long result = 1;
+        while (exp > 0) {
+            if (exp % 2 == 1) {
+                result = (result * base) % mod;
+            }
+            base = (base * base) % mod;
+            exp /= 2;
+        }
+        return result;
+    }
+
+    int minNonZeroProduct(int p) {
+        if (p == 1) return 1; // Base case
+        
+        long long max_num = (1LL << p) - 1;  // 2^p - 1
+        long long pairs = (max_num - 1) / 2; // (2^p - 2) / 2
+        
+        // Compute (max_num - 1)^pairs % MOD
+        long long part1 = modPow(max_num - 1, pairs, MOD);
+        
+        // Compute final result: (part1 * max_num) % MOD
+        return (part1 * (max_num % MOD)) % MOD;
+    }
+};
