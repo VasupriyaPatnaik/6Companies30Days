@@ -1,0 +1,38 @@
+class ThroneInheritance {
+private:
+    unordered_map<string, vector<string>> tree; // Parent -> Children mapping
+    unordered_set<string> dead; // Set of dead people
+    string king; // Store the king's name
+
+    void dfs(string name, vector<string>& order) {
+        if (dead.find(name) == dead.end()) {
+            order.push_back(name); // Add only if not dead
+        }
+        for (string& child : tree[name]) {
+            dfs(child, order);
+        }
+    }
+
+public:
+    // Constructor: Initialize the kingdom with the king
+    ThroneInheritance(string kingName) {
+        king = kingName;
+    }
+
+    // Register a child's birth
+    void birth(string parentName, string childName) {
+        tree[parentName].push_back(childName);
+    }
+
+    // Mark a person as dead
+    void death(string name) {
+        dead.insert(name);
+    }
+
+    // Get the current inheritance order
+    vector<string> getInheritanceOrder() {
+        vector<string> order;
+        dfs(king, order);
+        return order;
+    }
+};
