@@ -1,0 +1,42 @@
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    int maximizeSquareHoleArea(int n, int m, vector<int>& hBars, vector<int>& vBars) {
+        // Step 1: Sort the bars for processing
+        sort(hBars.begin(), hBars.end());
+        sort(vBars.begin(), vBars.end());
+
+        // Step 2: Find the maximum consecutive horizontal gap
+        int maxHGap = 1, count = 1;
+        for (int i = 1; i < hBars.size(); i++) {
+            if (hBars[i] == hBars[i - 1] + 1) {
+                count++;  // Continue the streak of consecutive removable bars
+            } else {
+                maxHGap = max(maxHGap, count);
+                count = 1;  // Reset count
+            }
+        }
+        maxHGap = max(maxHGap, count);  // Final update after loop
+
+        // Step 3: Find the maximum consecutive vertical gap
+        int maxVGap = 1;
+        count = 1;
+        for (int i = 1; i < vBars.size(); i++) {
+            if (vBars[i] == vBars[i - 1] + 1) {
+                count++;
+            } else {
+                maxVGap = max(maxVGap, count);
+                count = 1;
+            }
+        }
+        maxVGap = max(maxVGap, count);  // Final update
+
+        // Step 4: Compute the max square hole area
+        int maxSide = min(maxHGap + 1, maxVGap + 1);
+        return maxSide * maxSide;
+    }
+};
