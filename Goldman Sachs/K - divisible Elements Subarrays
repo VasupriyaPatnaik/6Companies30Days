@@ -1,0 +1,36 @@
+#include <vector>
+#include <unordered_set>
+
+using namespace std;
+
+class Solution {
+public:
+    int countDistinct(vector<int>& nums, int k, int p) {
+        unordered_set<string> uniqueSubarrays;
+        int n = nums.size();
+
+        // Iterate over all possible subarrays
+        for (int i = 0; i < n; i++) {
+            int divisibleCount = 0;
+            string subarray = "";  // String representation for uniqueness
+            
+            for (int j = i; j < n; j++) {
+                // Check divisibility condition
+                if (nums[j] % p == 0) {
+                    divisibleCount++;
+                }
+
+                // Stop if more than k elements are divisible by p
+                if (divisibleCount > k) break;
+
+                // Append to string representation (use delimiter for safety)
+                subarray += to_string(nums[j]) + ",";
+
+                // Insert into set to ensure uniqueness
+                uniqueSubarrays.insert(subarray);
+            }
+        }
+
+        return uniqueSubarrays.size();
+    }
+};
