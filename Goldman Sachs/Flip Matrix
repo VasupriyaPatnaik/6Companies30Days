@@ -1,0 +1,34 @@
+#include <vector>
+#include <unordered_map>
+#include <cstdlib>
+
+using namespace std;
+
+class Solution {
+private:
+    int m, n, total;
+    unordered_map<int, int> map; // Maps index to available free cells
+
+public:
+    Solution(int m, int n) {
+        this->m = m;
+        this->n = n;
+        total = m * n; // Total cells available
+    }
+
+    vector<int> flip() {
+        int randIndex = rand() % total; // Pick a random free cell
+        int pos = (map.count(randIndex)) ? map[randIndex] : randIndex;
+
+        // Swap and update the map
+        total--;
+        map[randIndex] = (map.count(total)) ? map[total] : total;
+
+        return {pos / n, pos % n}; // Convert 1D index back to (i, j)
+    }
+
+    void reset() {
+        map.clear();  // Reset the mapping
+        total = m * n; // Restore available cells
+    }
+};
