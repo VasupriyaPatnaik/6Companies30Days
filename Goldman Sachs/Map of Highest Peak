@@ -1,0 +1,62 @@
+#include <vector>
+#include <queue>
+#include <iostream>
+using namespace std;
+
+class Solution {
+public:
+    vector<vector<int>> highestPeak(vector<vector<int>>& isWater) {
+        int m = isWater.size();
+        int n = isWater[0].size();
+        vector<vector<int>> height(m, vector<int>(n, -1));
+        queue<pair<int, int>> q;
+
+        // Add all water cells to the queue and set their height to 0
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (isWater[i][j] == 1) {
+                    height[i][j] = 0;
+                    q.push({i, j});
+                }
+            }
+        }
+
+        // Directions for up, down, left, right
+        vector<int> directions = {-1, 0, 1, 0, -1, 0};
+
+        // BFS to propagate heights
+        while (!q.empty()) {
+            auto [x, y] = q.front();
+            q.pop();
+            // Explore neighbors (up, down, left, right)
+            for (int i = 0; i < 4; i++) {
+                int newX = x + directions[i];
+                int newY = y + directions[i + 1];
+
+                // Check if new coordinates are within bounds and the cell hasn't been visited yet
+                if (newX >= 0 && newX < m && newY >= 0 && newY < n && height[newX][newY] == -1) {
+                    height[newX][newY] = height[x][y] + 1;  // Assign height
+                    q.push({newX, newY});  // Push new cell into the queue for further processing
+                }
+            }
+        }
+
+        return height;
+    }
+};
+
+int main() {
+    Solution solution;
+    vector<vector<int>> isWater = {{0, 1}, {0, 0}};
+    vector<vector<int>> result = solution.highestPeak(isWater);
+    
+    // Print the result matrix
+    for (const auto& row : result) {
+        for (int cell : row) {
+            cout << cell << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
