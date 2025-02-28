@@ -1,0 +1,27 @@
+#include <queue>
+
+class DataStream {
+private:
+    int value, k, count;
+    std::queue<int> stream;
+
+public:
+    DataStream(int value, int k) : value(value), k(k), count(0) {}
+
+    bool consec(int num) {
+        if (num == value) {
+            count++;  // Increment if the new number matches value
+        }
+        stream.push(num);  // Add number to the queue
+
+        if (stream.size() > k) {
+            int removed = stream.front();
+            stream.pop();
+            if (removed == value) {
+                count--;  // Adjust count if the removed number was value
+            }
+        }
+
+        return (stream.size() >= k && count == k);
+    }
+};
